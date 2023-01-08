@@ -1,0 +1,21 @@
+next:
+  pages:
+    files:
+      - index.tsx
+      - _app.tsx
+    components:
+      utils:
+        - date.tsx
+        - time.tsx
+      layouts:
+        - app.tsx
+        - guest.tsx
+  public:
+    - tailwind.css
+    - secret.css
+    - guest.css
+    - partials.css
+  files:
+    - package.json
+    - tsconfig.json
+    - package-lock.json
