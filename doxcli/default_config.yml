@@ -1,4 +1,6 @@
 next:
+  tests:
+    - file.test.ts
   pages:
     files:
       - index.tsx
