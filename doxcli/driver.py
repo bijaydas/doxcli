@@ -5,7 +5,6 @@ import os.path
 import yaml
 from pathlib import Path
 import argparse
-from doxcli.utils import dump
 
 __VERSION__ = '1.0.0'
 
@@ -68,7 +67,7 @@ class DoxCliDriver:
     def __remove_files_key(self, object: dict):
         print(object)
 
-    def mk_structure(self, template: dict, location: str):
+    def mk_structure_v1(self, template: dict, location: str):
         for key in template.keys():
             if key == 'files':
                 files = template[key]
@@ -99,6 +98,33 @@ class DoxCliDriver:
             # New directory
             if isinstance(template[key], dict):
                 self.mk_structure(template[key], _dir)
+
+    def mk_structure(self, template: dict, location: str):
+        for key in template.keys():
+            if key == 'is_dir':
+                continue
+            """
+            If there is no key in the object or
+            there are keys in the object but not 'is_dir' key.
+            """
+            if template[key] is None or 'is_dir' not in template[key]:
+                _path = os.path.join(location, key)
+                content = """"""
+                if not os.path.isfile(_path):
+                    with open(_path, 'w', encoding='utf-8') as f:
+                        if isinstance(template[key], dict) and 'content' in template[key]:
+                            content = template[key]['content']
+                        print(content)
+                        f.write(content)
+                # No need to execute further
+                continue
+
+            # Create the directory with same name and recall the method
+            if 'is_dir' in template[key]:
+                _path = os.path.join(location, key)
+                if not os.path.isdir(_path):
+                    os.mkdir(_path)
+                    self.mk_structure(template[key], _path)
 
     def main(self) -> int:
         args = argparse.ArgumentParser(
