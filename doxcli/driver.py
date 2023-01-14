@@ -3,7 +3,6 @@
 import json
 import os.path
 import yaml
-import shutil
 from pathlib import Path
 import argparse
 
@@ -43,24 +42,43 @@ class DoxCliDriver:
 
     def __init__(self):
         self.__CONFIG_PATH = os.path.join(Path.home(), '.local', 'doxcli')
-        self.__CONFIG_FILE_PATH = os.path.join(self.__CONFIG_PATH, self.__CONFIG_FILE_NAME)
+        self.__CONFIG_FILE_PATH = os.path.join(
+            self.__CONFIG_PATH,
+            self.__CONFIG_FILE_NAME
+        )
         self.__DEFAULT_CONFIG_FILE_PATH = os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
             'default_config.yml'
         )
-
-    def __setup_templates(self) -> None:
-        with open(self.__CONFIG_FILE_PATH, 'r', encoding='utf-8') as cf:
-            self.__TEMPLATES = yaml.load(cf, yaml.FullLoader)['templates']
 
     def __validate_config_file(self):
         # TODO:
         # Validate if the config file is valid
         pass
 
-    def __setup_config(self):
-        _config_file = self.__DEFAULT_CONFIG_FILE_PATH
+    def __setup_new_template(self, _config_file):
+        config_template = {
+            'version': __VERSION__,
+        }
+        with open(_config_file, 'r', encoding='utf8') as dcf:
+            config_template['templates'] = yaml.load(dcf, yaml.FullLoader)
+            self.__TEMPLATES = config_template['templates']
+
+            with open(
+                    f'{self.__CONFIG_PATH}/{self.__CONFIG_FILE_NAME}', 'w',
+                    encoding='utf8'
+            ) as cf:
+                cf.write(json.dumps(config_template, indent=4))
+
+    def __load_existing_template(self, _config_file) -> None:
+        with open(_config_file, 'r', encoding='utf8') as dcf:
+            _template = yaml.load(dcf, yaml.FullLoader)
+            self.__TEMPLATES = _template['templates']
+
+    def __setup_config(self) -> bool:
         try:
+            _config_file = self.__DEFAULT_CONFIG_FILE_PATH
+
             if self.__USER_DEFINED_CONFIG_FILE:
                 self.__validate_config_file()
 
@@ -68,47 +86,21 @@ class DoxCliDriver:
                 Check if any file exits, and ask if user wants to replace it?
                 """
                 if os.path.isfile(self.__CONFIG_FILE_PATH):
-                    if confirm(f'Do you want to replace it?'):
+                    if confirm(f'{self.__CONFIG_FILE_PATH}'
+                               f' already exits, do you want to replace it?'):
                         os.remove(self.__CONFIG_FILE_PATH)
                     else:
                         """
-                        User denies to delete, skip the setup config stage.
+                        User denies to delete, load the existing config file.
                         """
+                        self.__load_existing_template(self.__CONFIG_FILE_PATH)
                         return True
                 _config_file = self.__USER_DEFINED_CONFIG_FILE
-
-            shutil.copy(
-                _config_file,
-                f'{self.__CONFIG_PATH}/{self.__CONFIG_FILE_NAME}'
-            )
-
-        except Exception as e:
-            # TODO:
-            # Setup a proper error response
-            print(e)
-
-    def __setup_config_v1(self) -> bool:
-        """
-        Checking if the config directory exists and creating if not exists
-        """
-        if os.path.isfile(self.__CONFIG_FILE_PATH):
-            return True
-        try:
-            if not os.path.isdir(self.__CONFIG_PATH):
-                os.mkdir(self.__CONFIG_PATH)
-
-            config_template = {
-                'version': __VERSION__,
-            }
-            with open(self.__DEFAULT_CONFIG_FILE_PATH, 'r', encoding='utf8') as dcf:
-                config_template['templates'] = yaml.load(dcf, yaml.FullLoader)
-
-                with open(self.__CONFIG_FILE_PATH, 'w', encoding='utf8') as cf:
-                    cf.write(json.dumps(config_template, indent=4))
+            self.__setup_new_template(_config_file)
             return True
         except FileNotFoundError as e:
             # TODO
-            # setup logger here
+            # setup logger and proper error message
             print(e)
             return False
         except PermissionError as e:
@@ -167,9 +159,10 @@ class DoxCliDriver:
             self.__USER_DEFINED_CONFIG_FILE = os.path.abspath(arguments.config)
 
         self.__setup_config()
-        return True
-        # self.__setup_templates()
 
+        """
+        Check if the template provided by user exits with us
+        """
         if arguments.template not in self.__TEMPLATES.keys():
             raise ValueError(f'{arguments.template} is not defined')
 
@@ -179,9 +172,6 @@ class DoxCliDriver:
         """
         template = self.__TEMPLATES[arguments.template]
 
-        # Where need to create
-        location = arguments.location
-
-        # self.mk_structure(template, location)
+        self.mk_structure(template, arguments.location)
 
         return 0
