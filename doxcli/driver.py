@@ -7,8 +7,7 @@ from pathlib import Path
 import argparse
 
 from doxcli.utils import confirm
-
-__VERSION__ = '1.0.0'
+from doxcli.__init__ import __VERSION__
 
 
 class DoxCliDriver:

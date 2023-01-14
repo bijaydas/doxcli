@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import os
 
 
 def dump(content):
@@ -12,3 +13,13 @@ def confirm(content):
     if result == 'y':
         return True
     return False
+
+
+def version_check():
+    pass
+
+
+def read(path):
+    if not os.path.isfile(path):
+        raise RuntimeError(f'{path} not found')
+    return open(path, 'r').read()
