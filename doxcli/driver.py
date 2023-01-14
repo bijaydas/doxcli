@@ -3,37 +3,91 @@
 import json
 import os.path
 import yaml
+import shutil
 from pathlib import Path
 import argparse
+
+from doxcli.utils import confirm
 
 __VERSION__ = '1.0.0'
 
 
 class DoxCliDriver:
+    # Config path without file name
     __CONFIG_PATH = None
+
+    # Config path with file name
     __CONFIG_FILE_PATH = None
+
+    """
+    Default config path with the package. If there is no config file in user's
+    home directory and user has not provided any custom config file, this file
+    will be copied to /home/{USER}/.local/doxcli 
+    """
     __DEFAULT_CONFIG_FILE_PATH = None
+
+    """
+    User defined config file
+    """
+    __USER_DEFINED_CONFIG_FILE = None
 
     """
     This value will be extracted from system config path
     """
     __TEMPLATES = None
 
+    """
+    Name of the config file
+    """
+    __CONFIG_FILE_NAME = 'config.yml'
+
     def __init__(self):
         self.__CONFIG_PATH = os.path.join(Path.home(), '.local', 'doxcli')
-        self.__CONFIG_FILE_PATH = os.path.join(self.__CONFIG_PATH, 'config.yml')
+        self.__CONFIG_FILE_PATH = os.path.join(self.__CONFIG_PATH, self.__CONFIG_FILE_NAME)
         self.__DEFAULT_CONFIG_FILE_PATH = os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
             'default_config.yml'
         )
-        self.__setup_config()
-        self.__setup_templates()
 
     def __setup_templates(self) -> None:
         with open(self.__CONFIG_FILE_PATH, 'r', encoding='utf-8') as cf:
             self.__TEMPLATES = yaml.load(cf, yaml.FullLoader)['templates']
 
-    def __setup_config(self) -> bool:
+    def __validate_config_file(self):
+        # TODO:
+        # Validate if the config file is valid
+        pass
+
+    def __setup_config(self):
+        _config_file = self.__DEFAULT_CONFIG_FILE_PATH
+        try:
+            if self.__USER_DEFINED_CONFIG_FILE:
+                self.__validate_config_file()
+
+                """
+                Check if any file exits, and ask if user wants to replace it?
+                """
+                if os.path.isfile(self.__CONFIG_FILE_PATH):
+                    if confirm(f'Do you want to replace it?'):
+                        os.remove(self.__CONFIG_FILE_PATH)
+                    else:
+                        """
+                        User denies to delete, skip the setup config stage.
+                        """
+                        return True
+                _config_file = self.__USER_DEFINED_CONFIG_FILE
+
+            shutil.copy(
+                _config_file,
+                f'{self.__CONFIG_PATH}/{self.__CONFIG_FILE_NAME}'
+            )
+
+        except Exception as e:
+            # TODO:
+            # Setup a proper error response
+            print(e)
+
+    def __setup_config_v1(self) -> bool:
         """
         Checking if the config directory exists and creating if not exists
         """
@@ -64,41 +118,6 @@ class DoxCliDriver:
             print(e)
             return False
 
-    def __remove_files_key(self, object: dict):
-        print(object)
-
-    def mk_structure_v1(self, template: dict, location: str):
-        for key in template.keys():
-            if key == 'files':
-                files = template[key]
-                for file in files:
-                    _file = os.path.join(location, file)
-                    with open(_file, 'w', encoding='utf8') as file:
-                        pass
-                continue
-
-            if isinstance(template[key], list):
-                _dir = os.path.join(location, key)
-                if not os.path.isdir(_dir):
-                    os.mkdir(_dir)
-                files = template[key]
-                for file in files:
-                    _file = os.path.join(_dir, file)
-                    with open(_file, 'w', encoding='utf8') as f:
-                        pass
-
-            _dir = os.path.join(location, key)
-            if not os.path.isdir(_dir):
-                os.mkdir(_dir)
-
-            if not os.path.isdir(_dir):
-                # Blank directory so skip it
-                continue
-
-            # New directory
-            if isinstance(template[key], dict):
-                self.mk_structure(template[key], _dir)
-
     def mk_structure(self, template: dict, location: str):
         for key in template.keys():
             if key == 'is_dir':
@@ -114,7 +133,6 @@ class DoxCliDriver:
                     with open(_path, 'w', encoding='utf-8') as f:
                         if isinstance(template[key], dict) and 'content' in template[key]:
                             content = template[key]['content']
-                        print(content)
                         f.write(content)
                 # No need to execute further
                 continue
@@ -131,24 +149,39 @@ class DoxCliDriver:
             prog='Cli to create project templates'
         )
         args.add_argument(
-            'template', help='Name of the project you want to create'
+            'template',
+            help='Name of the project you want to create'
         )
         args.add_argument(
-            'location', help='Where do you want to create the project?'
+            '--location',
+            help='Where do you want to create the project?',
+            default='.',
+        )
+        args.add_argument(
+            '--config', help='New config path.',
         )
 
         arguments = args.parse_args()
 
+        if arguments.config is not None:
+            self.__USER_DEFINED_CONFIG_FILE = os.path.abspath(arguments.config)
+
+        self.__setup_config()
+        return True
+        # self.__setup_templates()
+
         if arguments.template not in self.__TEMPLATES.keys():
             raise ValueError(f'{arguments.template} is not defined')
 
-        # Extracting the values
-        # Which template shouldbe used
+        """
+        Extracting the values
+        Which template should be used
+        """
         template = self.__TEMPLATES[arguments.template]
 
         # Where need to create
         location = arguments.location
 
-        self.mk_structure(template, location)
+        # self.mk_structure(template, location)
 
         return 0
