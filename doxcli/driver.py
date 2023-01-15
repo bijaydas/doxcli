@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import json
 import os.path
 import yaml
@@ -47,7 +45,8 @@ class DoxCliDriver:
         )
         self.__DEFAULT_CONFIG_FILE_PATH = os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
-            'default_config.yml'
+            'data',
+            'default_config.yml',
         )
 
     def __validate_config_file(self):

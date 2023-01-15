@@ -1,0 +1,38 @@
+next:
+  bijay:
+    is_dir: True
+  tests:
+    is_dir: True
+    file.test.ts:
+  pages:
+    is_dir: True
+    files:
+      is_dir: True
+      index.tsx:
+      _app.tsx:
+        content: |
+          import React from 'react';
+    components:
+      is_dir: True
+      utils:
+        is_dir: True
+        date.tsx:
+        time.tsx:
+      layouts:
+        is_dir: True
+        app.tsx:
+        guest.tsx:
+  public:
+    is_dir: True
+    tailwind.css:
+      content: |
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+    secret.css:
+    guest.css:
+    partials.css:
+  package.json:
+    content: "I am awesome"
+  tsconfig.json:
+  package-lock.json:
