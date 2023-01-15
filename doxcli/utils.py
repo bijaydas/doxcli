@@ -15,6 +15,14 @@ def confirm(content):
     return False
 
 
+def print_error(content):
+    print(f'ERROR: {content}')
+
+
+def print_message(content):
+    print(f'Success: {content}')
+
+
 def version_check():
     pass
 

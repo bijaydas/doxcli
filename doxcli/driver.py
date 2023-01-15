@@ -1,10 +1,12 @@
+#!/usr/bin/env python
+
 import json
 import os.path
 import yaml
 from pathlib import Path
 import argparse
 
-from doxcli.utils import confirm
+from doxcli.utils import confirm, print_message
 from doxcli.__init__ import __VERSION__
 
 
@@ -143,7 +145,7 @@ class DoxCliDriver:
             help='Name of the project you want to create'
         )
         args.add_argument(
-            '--location',
+            'location',
             help='Where do you want to create the project?',
             default='.',
         )
@@ -152,6 +154,12 @@ class DoxCliDriver:
         )
 
         arguments = args.parse_args()
+
+        """
+        Check if location directory exists
+        """
+        if not os.path.isdir(arguments.location):
+            raise FileNotFoundError(f'{arguments.location} not found')
 
         if arguments.config is not None:
             self.__USER_DEFINED_CONFIG_FILE = os.path.abspath(arguments.config)
@@ -171,5 +179,7 @@ class DoxCliDriver:
         template = self.__TEMPLATES[arguments.template]
 
         self.mk_structure(template, arguments.location)
+
+        print_message('Directory created successfully!')
 
         return 0

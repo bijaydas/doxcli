@@ -1,9 +1,7 @@
 next:
-  bijay:
-    is_dir: True
   tests:
     is_dir: True
-    file.test.ts:
+    main.test.ts:
   pages:
     is_dir: True
     files:
@@ -33,6 +31,5 @@ next:
     guest.css:
     partials.css:
   package.json:
-    content: "I am awesome"
   tsconfig.json:
   package-lock.json:
