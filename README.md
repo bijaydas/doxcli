@@ -50,4 +50,4 @@ A config file is automatically created at `~/.config/doxcli/config` at first lau
 If you're interested in contributing to this project, first of all I would like to extend my heartfelt gratitude. I've written a small doc to describe how to get this running in a development setup.
 
 Please feel free to reach out to me if you need help.
-My email: imbijaydas@gmail.com, Twitter: [`@imbijaydas`](https://twitter.com/imBijayDas)
+My email: imbijaydas@gmail.com, Twitter: [@imbijaydas](https://twitter.com/imBijayDas)
