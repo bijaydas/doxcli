@@ -6,7 +6,8 @@ import yaml
 from pathlib import Path
 import argparse
 
-from doxcli.utils import confirm, print_message
+from doxcli.utils import confirm, print_message, is_file, has_content, is_dir_empty
+import doxcli.utils as utils
 from doxcli.__init__ import __VERSION__
 
 
@@ -38,6 +39,11 @@ class DoxCliDriver:
     Name of the config file
     """
     __CONFIG_FILE_NAME = 'config.yml'
+
+    """
+    Keys to ignore
+    """
+    __IGNORE_KEYS = ('is_dir',)
 
     def __init__(self):
         self.__CONFIG_PATH = os.path.join(Path.home(), '.local', 'doxcli')
@@ -111,30 +117,24 @@ class DoxCliDriver:
             return False
 
     def mk_structure(self, template: dict, location: str):
-        for key in template.keys():
-            if key == 'is_dir':
-                continue
+        for key in template:
             """
-            If there is no key in the object or
-            there are keys in the object but not 'is_dir' key.
+            There are some system defined keys i.e is_dir or any other.
+            These keys should be ignored
             """
-            if template[key] is None or 'is_dir' not in template[key]:
-                _path = os.path.join(location, key)
-                content = """"""
-                if not os.path.isfile(_path):
-                    with open(_path, 'w', encoding='utf-8') as f:
-                        if isinstance(template[key], dict) and 'content' in template[key]:
-                            content = template[key]['content']
-                        f.write(content)
-                # No need to execute further
+            if key in self.__IGNORE_KEYS:
                 continue
 
-            # Create the directory with same name and recall the method
-            if 'is_dir' in template[key]:
-                _path = os.path.join(location, key)
-                if not os.path.isdir(_path):
-                    os.mkdir(_path)
-                    self.mk_structure(template[key], _path)
+            if is_file(template[key]):
+                content = ""
+                if has_content(template[key]):
+                    content = template[key]['content']
+                utils.create_file(os.path.join(location, key), content)
+                continue
+
+            _path = os.path.join(location, key)
+            os.mkdir(_path)
+            self.mk_structure(template[key], _path)
 
     def main(self) -> int:
         args = argparse.ArgumentParser(
@@ -155,11 +155,17 @@ class DoxCliDriver:
 
         arguments = args.parse_args()
 
+        if not is_dir_empty(arguments.location):
+            raise Exception(f'{arguments.location} not empty')
+
         """
         Check if location directory exists
         """
         if not os.path.isdir(arguments.location):
-            raise FileNotFoundError(f'{arguments.location} not found')
+            if confirm(f'{arguments.location} does not exists, do you want to create?'):
+                os.mkdir(arguments.location)
+            else:
+                raise FileNotFoundError(f'{arguments.location} not found')
 
         if arguments.config is not None:
             self.__USER_DEFINED_CONFIG_FILE = os.path.abspath(arguments.config)
