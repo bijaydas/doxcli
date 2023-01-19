@@ -1,0 +1,26 @@
+next:
+  tests:
+    is_dir: True
+    .gitignore:
+
+  pages:
+    is_dir: True
+    components:
+      is_dir: True
+      layouts:
+        is_dir: True
+        app.tsx:
+        guest.tsx:
+
+  public:
+    is_dir: True
+    images:
+      is_dir: True
+      files:
+        .gitignore:
+    app.css:
+      content: |
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
