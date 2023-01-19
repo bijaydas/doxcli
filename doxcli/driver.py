@@ -54,7 +54,7 @@ class DoxCliDriver:
         self.__DEFAULT_CONFIG_FILE_PATH = os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
             'data',
-            'default_config.yml',
+            'config.yml',
         )
 
     def __validate_config_file(self):
