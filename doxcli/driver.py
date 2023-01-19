@@ -8,7 +8,7 @@ import argparse
 
 from doxcli.utils import confirm, print_message, is_file, has_content, is_dir_empty
 import doxcli.utils as utils
-from doxcli.__init__ import __VERSION__
+from doxcli.__init__ import __version__
 
 
 class DoxCliDriver:
@@ -21,7 +21,7 @@ class DoxCliDriver:
     """
     Default config path with the package. If there is no config file in user's
     home directory and user has not provided any custom config file, this file
-    will be copied to /home/{USER}/.local/doxcli 
+    will be copied to /home/{USER}/.config/doxcli 
     """
     __DEFAULT_CONFIG_FILE_PATH = None
 
@@ -46,7 +46,7 @@ class DoxCliDriver:
     __IGNORE_KEYS = ('is_dir',)
 
     def __init__(self):
-        self.__CONFIG_PATH = os.path.join(Path.home(), '.local', 'doxcli')
+        self.__CONFIG_PATH = os.path.join(Path.home(), '.config', 'doxcli')
         self.__CONFIG_FILE_PATH = os.path.join(
             self.__CONFIG_PATH,
             self.__CONFIG_FILE_NAME
@@ -64,8 +64,11 @@ class DoxCliDriver:
 
     def __setup_new_template(self, _config_file):
         config_template = {
-            'version': __VERSION__,
+            'version': __version__,
         }
+        if not os.path.isdir(self.__CONFIG_PATH):
+            os.mkdir(self.__CONFIG_PATH)
+
         with open(_config_file, 'r', encoding='utf8') as dcf:
             config_template['templates'] = yaml.load(dcf, yaml.FullLoader)
             self.__TEMPLATES = config_template['templates']
