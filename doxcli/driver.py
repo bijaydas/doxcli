@@ -6,7 +6,6 @@ import yaml
 from pathlib import Path
 import argparse
 
-from doxcli.utils import confirm, print_message, is_file, has_content, is_dir_empty
 import doxcli.utils as utils
 from doxcli.__init__ import __version__
 
@@ -43,7 +42,7 @@ class DoxCliDriver:
     """
     Keys to ignore
     """
-    __IGNORE_KEYS = ('is_dir',)
+    __IGNORE_KEYS = ('is_dir', 'commands',)
 
     def __init__(self):
         self.__CONFIG_PATH = os.path.join(Path.home(), '.config', 'doxcli')
@@ -95,7 +94,7 @@ class DoxCliDriver:
                 Check if any file exits, and ask if user wants to replace it?
                 """
                 if os.path.isfile(self.__CONFIG_FILE_PATH):
-                    if confirm(f'{self.__CONFIG_FILE_PATH}'
+                    if utils.confirm(f'{self.__CONFIG_FILE_PATH}'
                                f' already exits, do you want to replace it?'):
                         os.remove(self.__CONFIG_FILE_PATH)
                     else:
@@ -121,6 +120,11 @@ class DoxCliDriver:
 
     def mk_structure(self, template: dict, location: str):
         for key in template:
+
+            if key == 'commands':
+                utils.shell(template[key], location)
+                continue
+
             """
             There are some system defined keys i.e is_dir or any other.
             These keys should be ignored
@@ -128,13 +132,16 @@ class DoxCliDriver:
             if key in self.__IGNORE_KEYS:
                 continue
 
-            if is_file(template[key]):
+            if utils.is_file(template[key]):
                 content = ""
-                if has_content(template[key]):
+                if utils.has_content(template[key]):
                     content = template[key]['content']
                 utils.create_file(os.path.join(location, key), content)
                 continue
 
+            """
+            Else make the directory and recreate the structure
+            """
             _path = os.path.join(location, key)
             os.mkdir(_path)
             self.mk_structure(template[key], _path)
@@ -158,14 +165,14 @@ class DoxCliDriver:
 
         arguments = args.parse_args()
 
-        if not is_dir_empty(arguments.location):
+        if not utils.is_dir_empty(arguments.location):
             raise Exception(f'{arguments.location} not empty')
 
         """
         Check if location directory exists
         """
         if not os.path.isdir(arguments.location):
-            if confirm(f'{arguments.location} does not exists, do you want to create?'):
+            if utils.confirm(f'{arguments.location} does not exists, do you want to create?'):
                 os.mkdir(arguments.location)
             else:
                 raise FileNotFoundError(f'{arguments.location} not found')
@@ -189,6 +196,6 @@ class DoxCliDriver:
 
         self.mk_structure(template, arguments.location)
 
-        print_message('Directory created successfully!')
+        # print_message('Directory created successfully!')
 
         return 0

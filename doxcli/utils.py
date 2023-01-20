@@ -2,6 +2,7 @@
 
 import json
 import os
+import subprocess
 
 
 def dump(content):
@@ -54,3 +55,15 @@ def is_empty(value):
 
 def is_dir_empty(path):
     return len(os.listdir(path)) == 0
+
+
+def shell(_commands: str = None, cwd: str = None):
+    commands = list(filter(None, _commands.split('\n')))
+    for command in commands:
+        try:
+            print(f'Executing {command}...')
+            subprocess.run(command, cwd=cwd, shell=True)
+        except Exception as e:
+            # TODO:
+            # Fix error message
+            print(e)
