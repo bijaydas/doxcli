@@ -1,5 +1,8 @@
 import os
+import argparse
+
 import doxcli.config.app as config
+from doxcli.services.godaddy.godaddy import GoDaddy
 
 
 class Bootstrap:
@@ -61,6 +64,58 @@ class Bootstrap:
         if not os.path.isdir(self._dir_local_doxcli_log):
             os.mkdir(self._dir_local_doxcli_log)
 
-    def main(self):
+    def setup_dirs(self):
         self._setup_config_dir()
         self._setup_log_dir()
+
+    def setup_args_parser(self):
+        parser = argparse.ArgumentParser()
+
+        parser.add_argument(
+            "service",
+            help="What service would you like to run? Ex. GoDaddy, ABC, XYZ",
+
+            # All the available services will get listed here.
+            choices=["godaddy"]
+        )
+
+        parser.add_argument(
+            "--name",
+            help="First argument for service"
+        )
+
+        return parser
+
+    def main(self):
+        """
+        Will set up the config and local directory in ~/
+        """
+        self.setup_dirs()
+
+        """
+        User arguments
+        """
+        parser = self.setup_args_parser()
+        args = parser.parse_args()
+
+        """
+        Service instance selected by user
+        """
+        service = None
+
+        if args.service == "godaddy":
+            service = GoDaddy()
+
+            """
+            Check what user wants to do with --name argument.
+            
+            If there is no --name then show help and exit.
+            """
+            if not args.name:
+                parser.print_help()
+                return 0
+
+            """
+            Loading functionality for GoDaddy, which is Domain search
+            """
+            return service.is_available(args.name)

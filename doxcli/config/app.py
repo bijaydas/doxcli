@@ -8,6 +8,7 @@ Configs
 DIR_USER_HOME = os.path.expanduser('~')
 DIR_SYS_CONFIG = os.path.join(DIR_USER_HOME, '.config')
 DIR_CONFIG = os.path.join(DIR_USER_HOME, '.config', 'doxcli')
+DOXCLI_CONFIG_FILE = os.path.join(DIR_USER_HOME, '.config', 'doxcli', 'config.yaml')
 
 
 """

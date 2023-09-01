@@ -11,7 +11,6 @@ logging.basicConfig(filename=config.log_file(), encoding='utf8', level=logging.D
 
 def main():
     try:
-        raise Exception('hi')
         Bootstrap().main()
     except NotADirectoryError as e:
         logging.error(e)
