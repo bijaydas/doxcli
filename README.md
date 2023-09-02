@@ -1,53 +1,51 @@
-# dox-cli (alpha)
+<p align="center"><a href="https://github.com/bijaydas/doxcli" target="_blank"><img src="images/logo.png"></a></p>
 
-Cli to create project structure from a pre-defined YAML template.
+## About DocCli
 
-There are lots of predefined template comes with the tool, you can also use your own templates as per your requirement.
+DoxCli is a cli tool which helps to do day to day jobs.
 
-## Quick start
+## Features
 
-This project is in `alpha` stage, so install with custom Python environment.
+1. Check if domain is available using GoDaddy API.
+2. More features are coming soon...
 
-If you already know how to install python packages, then you can simply do:
+## Installation
 
-```shell
-$ pip install doxcli
+1. As this project is in Alpha mode, it is recommended to install it in `virtual env`.
+
+    ```shell
+    python3 -m venv name-your-venv
+    
+    source path-to-your-venv/bin/activate
+    
+    pip install doxcli
+    ```
+
+2. Create the config file in `~/.config/doxcli/config.yaml`
+3. And add your GoDaddy API credentials.
+    ```yaml
+   godaddy:
+      api_key: api-key
+      api_secret: api-secret
+   ```
+
+## How to use
+
+After the confi file has setup, you can run the following command to check if any domain is available.
+
+```bazaar
+dox godaddy --name bijaydas.com
 ```
+<br />
 
-If you don't know how to install python packages, please check the [detailed instructions](https://pip.pypa.io/en/latest/installation/).
+**Output screenshot**
 
-## Usage
+<p align="center"><img src="images/godaddy-output.png" /></p>
 
-```shell
-dox [template_name] [destination]
-```
+## Contributing
 
-Examples:
+Thank you for considering contributing to the DocCli!
 
-```shell
-# Make sure the destination directory exists
-$ dox next ~/Code/nextjs-app
-```
+## License
 
-For more details
-
-```shell
-$ dox --help
-
-Usage: dox [template name] [destination] [--options]
-
-Options:
-  # TODO
-```
-
-## Config
-
-A config file is automatically created at `~/.config/doxcli/config` at first launch. See the file itself for a description of all available options.
-
-
-## Contributions
-
-If you're interested in contributing to this project, first of all I would like to extend my heartfelt gratitude. I've written a small doc to describe how to get this running in a development setup.
-
-Please feel free to reach out to me if you need help.
-My email: imbijaydas@gmail.com, Twitter: [@imbijaydas](https://twitter.com/imBijayDas)
+The Laravel framework is open-sourced software licensed under the [MIT license](LICENSE.md).
