@@ -134,3 +134,4 @@ dmypy.json
 sudo_*
 
 *local*
+push.sh
