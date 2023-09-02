@@ -1,4 +1,4 @@
-<p align="center"><a href="https://github.com/bijaydas/doxcli" target="_blank"><img src="images/logo.png"></a></p>
+<p align="center"><a href="https://github.com/bijaydas/doxcli" target="_blank"><img src="https://raw.githubusercontent.com/bijaydas/doxcli/v2.x/images/logo.png"></a></p>
 
 ## About DocCli
 
@@ -40,7 +40,7 @@ dox godaddy --name bijaydas.com
 
 **Output screenshot**
 
-<p align="center"><img src="images/godaddy-output.png" /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/bijaydas/doxcli/v2.x/images/godaddy-output.png" /></p>
 
 ## Contributing
 
