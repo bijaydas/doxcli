@@ -48,4 +48,4 @@ Thank you for considering contributing to the DocCli!
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](LICENSE.md).
+The DoxCli is open-sourced software licensed under the [MIT license](LICENSE.md).
