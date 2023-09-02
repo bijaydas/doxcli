@@ -30,7 +30,7 @@ setup_options = dict(
     long_description_content_type="text/markdown",
     author='Bijay Das',
     author_email='me@bijaydas.com',
-    url='https://github.com/bijaydas/dox-cli',
+    url='https://github.com/bijaydas/doxcli',
     scripts=['cli.py'],
     package_data={'doxcli': ['data/*']},
     install_requires=install_requires,
@@ -42,7 +42,7 @@ setup_options = dict(
     extras_require={},
     python_requires='>=3.7',
     project_urls={
-        'Source': 'https://github.com/bijaydas/dox-cli',
+        'Source': 'https://github.com/bijaydas/doxcli',
     },
     classifiers=[
          "Programming Language :: Python :: 3",
