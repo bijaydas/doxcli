@@ -81,7 +81,11 @@ class Bootstrap:
 
         parser.add_argument(
             "--name",
-            help="First argument for service"
+            help="Name argument for service"
+        )
+        parser.add_argument(
+            "--file",
+            help="File path argument for service"
         )
 
         return parser
@@ -101,21 +105,28 @@ class Bootstrap:
         """
         Service instance selected by user
         """
-        service = None
 
         if args.service == "godaddy":
             service = GoDaddy()
 
-            """
-            Check what user wants to do with --name argument.
-            
-            If there is no --name then show help and exit.
-            """
-            if not args.name:
-                parser.print_help()
-                return 0
+            if args.name:
+                """
+                Loading functionality for GoDaddy, which is Domain search
+                by name.
+                """
+                return service.is_available_by_name(args.name)
 
-            """
-            Loading functionality for GoDaddy, which is Domain search
-            """
-            return service.is_available(args.name)
+            if args.file:
+                """
+                Loading functionality for GoDaddy, which is Domain search
+                by file.
+                """
+                return service.is_available_by_file(args.file)
+
+        """
+        Check what user wants to do with --name argument.
+        
+        If there is no --name then show help and exit.
+        """
+        parser.print_help()
+        return 0

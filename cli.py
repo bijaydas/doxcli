@@ -11,12 +11,13 @@ logging.basicConfig(filename=config.log_file(), encoding='utf8', level=logging.D
 
 def main():
     try:
-        Bootstrap().main()
+        return Bootstrap().main()
     except NotADirectoryError as e:
+        logging.error(e)
+    except FileExistsError as e:
         logging.error(e)
     except Exception as e:
         logging.error(e)
-        print(e)
     return 0
 
 
