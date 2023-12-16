@@ -1,8 +1,11 @@
 import os
 import argparse
+import sys
 
 import doxcli.config.app as config
 from doxcli.services.godaddy.godaddy import GoDaddy
+from doxcli.services.faker.fakes import Fakes
+from . import __version__
 
 
 class Bootstrap:
@@ -68,7 +71,8 @@ class Bootstrap:
         self._setup_config_dir()
         self._setup_log_dir()
 
-    def setup_args_parser(self):
+    @staticmethod
+    def setup_args_parser():
         parser = argparse.ArgumentParser()
 
         parser.add_argument(
@@ -76,12 +80,19 @@ class Bootstrap:
             help="What service would you like to run? Ex. GoDaddy, ABC, XYZ",
 
             # All the available services will get listed here.
-            choices=["godaddy"]
+            choices=["godaddy", "faker"]
         )
 
         parser.add_argument(
             "--name",
             help="Name argument for service"
+        )
+        parser.add_argument(
+            "-v",
+            "--version",
+            help="Check current version",
+            action='version',
+            version=__version__
         )
         parser.add_argument(
             "--file",
@@ -122,6 +133,10 @@ class Bootstrap:
                 by file.
                 """
                 return service.is_available_by_file(args.file)
+
+        if args.service == 'faker':
+            service = Fakes()
+            service.call_user_func(args.name)
 
         """
         Check what user wants to do with --name argument.
