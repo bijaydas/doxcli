@@ -4,9 +4,10 @@ import time
 
 from requests import request
 
-from doxcli.utils.general import is_config_file_available, get_config, print_dict_pretty
-from doxcli.exceptions.config import ConfigException
-from doxcli.services.godaddy.general import parse_json_file, parse_txt_file
+from doxcli.utils.general import is_config_file_available, get_config, \
+    print_dict_pretty
+from doxcli.exceptions.general import ConfigException
+from doxcli.utils.file import parse_json_file, parse_txt_file
 
 
 class GoDaddy:

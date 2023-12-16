@@ -136,7 +136,7 @@ class Bootstrap:
 
         if args.service == 'faker':
             service = Fakes()
-            service.call_user_func(args.name)
+            return service.call_user_func(args.name)
 
         """
         Check what user wants to do with --name argument.
