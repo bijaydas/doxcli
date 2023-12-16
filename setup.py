@@ -26,6 +26,7 @@ install_requires = [
     'charset-normalizer==3.2.0',
     'cryptography==41.0.3',
     'docutils==0.20.1',
+	'Faker==21.0.0',
     'idna==3.4',
     'importlib-metadata==6.8.0',
     'jaraco.classes==3.3.0',
